@@ -3,7 +3,7 @@ require_once '../../config/db.php';
 require_once '../../models/Producto.php';
 require_once '../../models/Categoria.php';
 
-$productoModel = new Producto($pdo);
+$productoModel = new Productos($pdo);
 $categoriaModel = new Categoria($pdo);
 
 // Si estamos editando, cargamos los datos del producto

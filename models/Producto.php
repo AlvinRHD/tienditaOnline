@@ -18,10 +18,11 @@ class Productos {
     
 
     public function getAll() {
-        $sql = "SELECT producto_id, nombre, precio FROM Productos WHERE estado = 'activo'";
+        $sql = "SELECT producto_id, nombre, descripcion, precio, cantidad_disponible, categoria_id, imagen FROM Productos WHERE estado = 'activo'";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     
 
     public function getById($id) {

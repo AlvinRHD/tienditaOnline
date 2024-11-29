@@ -4,6 +4,7 @@ if (!isset($_GET['venta_id'])) {
     exit;
 }
 $venta_id = $_GET['venta_id'];
+echo "¡Gracias por tu compra! Tu venta ID es: " . $venta_id;
 ?>
 <!DOCTYPE html>
 <html>

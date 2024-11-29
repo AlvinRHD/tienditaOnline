@@ -2,7 +2,7 @@
 require_once '../config/db.php';
 require_once '../models/Producto.php';
 
-$productoModel = new Producto($pdo);
+$productoModel = new Productos($pdo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
