@@ -5,15 +5,24 @@ class Productos {
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
-
-    public function getAll() {
-        $stmt = $this->pdo->query("
-            SELECT p.producto_id, p.nombre, p.descripcion, p.precio, p.cantidad_disponible, p.imagen, c.nombre_categoria 
-            FROM Productos p 
-            LEFT JOIN Categorias c ON p.categoria_id = c.categoria_id
-        ");
+    public function search($term) {
+        $stmt = $this->pdo->prepare("SELECT * FROM Productos WHERE nombre LIKE ? AND estado = 'activo'");
+        $stmt->execute(['%' . $term . '%']);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getByCategory($categoria_id) {
+        $stmt = $this->pdo->prepare("SELECT * FROM Productos WHERE categoria_id = ? AND estado = 'activo'");
+        $stmt->execute([$categoria_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+
+    public function getAll() {
+        $sql = "SELECT producto_id, nombre, precio FROM Productos WHERE estado = 'activo'";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 
     public function getById($id) {
         $stmt = $this->pdo->prepare("SELECT * FROM Productos WHERE producto_id = ?");

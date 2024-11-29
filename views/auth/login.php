@@ -6,18 +6,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Verificar si el usuario existe
+    // Verificar si el usuario existe y es cliente
     $stmt = $pdo->prepare("SELECT * FROM Usuarios WHERE email = ?");
     $stmt->execute([$email]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($usuario && password_verify($password, $usuario['password'])) {
+    if ($usuario && password_verify($password, $usuario['password']) && $usuario['rol'] == 'cliente') {
         $_SESSION['usuario_id'] = $usuario['usuario_id'];
         $_SESSION['rol'] = $usuario['rol'];
         header("Location: ../home/index.php");
         exit;
     } else {
-        echo "<script>alert('Credenciales incorrectas');</script>";
+        echo "<script>alert('Credenciales incorrectas o no eres un cliente.');</script>";
     }
 }
 ?>

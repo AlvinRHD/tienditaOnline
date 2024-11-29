@@ -41,5 +41,24 @@ class Carrito {
         $stmt = $this->pdo->prepare("DELETE FROM Carrito WHERE usuario_id = ?");
         return $stmt->execute([$usuario_id]);
     }
+
+        // Obtener los productos del carrito por usuario
+        public function getProductosCarrito($usuario_id) {
+            $sql = "SELECT c.carrito_id, c.cantidad, p.producto_id, p.nombre, p.precio, p.cantidad_disponible, p.imagen 
+                    FROM Carrito c
+                    INNER JOIN Productos p ON c.producto_id = p.producto_id
+                    WHERE c.usuario_id = :usuario_id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute(['usuario_id' => $usuario_id]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
+    
+        // Vaciar carrito
+        public function vaciarCarrito($usuario_id) {
+            $sql = "DELETE FROM Carrito WHERE usuario_id = :usuario_id";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute(['usuario_id' => $usuario_id]);
+        }
 }
 ?>

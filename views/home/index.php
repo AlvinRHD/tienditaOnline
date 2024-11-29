@@ -1,21 +1,70 @@
 <?php
+session_start();
+
+// Verificar si el usuario está logueado y es un cliente
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'cliente') {
+    header("Location: ../auth/login.php");
+    exit;
+}
+
 require_once '../../config/db.php';
 require_once '../../models/Producto.php';
 require_once '../../models/Carrito.php';
+require_once '../../models/Categoria.php'; // Incluir el modelo de categorías
 
+// Instanciar los modelos
 $productoModel = new Productos($pdo);
 $carritoModel = new Carrito($pdo);
-$productos = $productoModel->getAll();
+$categoriaModel = new Categoria($pdo);
 
-$usuario_id = 1; // Cambiar por el ID real del usuario logueado (normalmente lo obtienes de la sesión)
+// Obtener todas las categorías
+$categorias = $categoriaModel->getAll();
+
+// Buscar productos por término
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+if ($searchTerm) {
+    $productos = $productoModel->search($searchTerm);
+} else {
+    // Filtrar productos por categoría seleccionada
+    $categoria_id = isset($_GET['categoria']) ? $_GET['categoria'] : '';
+    if ($categoria_id) {
+        $productos = $productoModel->getByCategory($categoria_id);
+    } else {
+        $productos = $productoModel->getAll(); // Obtener todos los productos
+    }
+}
+
+// Obtener el ID del usuario logueado
+$usuario_id = $_SESSION['usuario_id']; 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Tienda Online</title>
 </head>
 <body>
     <h1>Bienvenido a la Tienda Online</h1>
+
+    <!-- Barra de búsqueda -->
+    <form action="index.php" method="GET">
+        <input type="text" name="search" placeholder="Buscar productos..." value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Filtro por categoría -->
+    <form action="index.php" method="GET">
+        <select name="categoria">
+            <option value="">Todas las categorías</option>
+            <?php foreach ($categorias as $categoria): ?>
+                <option value="<?= $categoria['categoria_id'] ?>" <?= isset($_GET['categoria']) && $_GET['categoria'] == $categoria['categoria_id'] ? 'selected' : '' ?>>
+                    <?= $categoria['nombre_categoria'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
 
     <h2>Productos Disponibles</h2>
     <div class="productos">

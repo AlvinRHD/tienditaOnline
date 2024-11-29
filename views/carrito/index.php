@@ -1,11 +1,21 @@
 <?php
+session_start();
 require_once '../../config/db.php';
 require_once '../../models/Carrito.php';
+require_once '../../models/Producto.php';
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../auth/login.php");
+    exit;
+}
 
 $carritoModel = new Carrito($pdo);
-$usuario_id = 1; // Cambiar por el ID real del usuario logueado
+$productosModel = new Productos($pdo);
+$usuario_id = $_SESSION['usuario_id']; // Usuario logueado
 $productosEnCarrito = $carritoModel->getByUserId($usuario_id);
+$productosDisponibles = $productosModel->getAll(); // Obtener productos disponibles
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,6 +23,16 @@ $productosEnCarrito = $carritoModel->getByUserId($usuario_id);
 </head>
 <body>
     <h1>Carrito de Compras</h1>
+
+    <!-- Mostrar mensajes de error o éxito -->
+    <?php if (isset($_GET['error']) && $_GET['error'] == 'empty'): ?>
+        <p style="color: red;">El carrito está vacío. Agrega productos antes de confirmar la compra.</p>
+    <?php endif; ?>
+
+    <?php if (isset($_GET['success']) && $_GET['success'] == 'completed'): ?>
+        <p style="color: green;">¡Compra confirmada exitosamente!</p>
+    <?php endif; ?>
+
     <table>
         <thead>
             <tr>
@@ -25,34 +45,46 @@ $productosEnCarrito = $carritoModel->getByUserId($usuario_id);
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($productosEnCarrito as $producto): ?>
+            <?php if (!empty($productosEnCarrito)): ?>
+                <?php foreach ($productosEnCarrito as $producto): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($producto['nombre']) ?></td>
+                        <td>$<?= number_format($producto['precio'], 2) ?></td>
+                        <td>
+                            <form action="../../controllers/CarritoController.php" method="POST">
+                                <input type="hidden" name="carrito_id" value="<?= $producto['carrito_id'] ?>">
+                                <input type="number" name="cantidad" value="<?= $producto['cantidad'] ?>" min="1" required>
+                                <button type="submit" name="update_quantity">Actualizar</button>
+                            </form>
+                        </td>
+                        <td>$<?= number_format($producto['precio'] * $producto['cantidad'], 2) ?></td>
+                        <td>
+                            <img src="../../public/image/<?= htmlspecialchars($producto['imagen']) ?>" alt="Imagen del producto" width="50">
+                        </td>
+                        <td>
+                            <a href="../../controllers/CarritoController.php?action=remove&carrito_id=<?= $producto['carrito_id'] ?>" onclick="return confirm('¿Estás seguro de eliminar este producto del carrito?')">Eliminar</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
                 <tr>
-                    <td><?= $producto['nombre'] ?></td>
-                    <td><?= $producto['precio'] ?></td>
-                    <td>
-                        <form action="../../controllers/CarritoController.php" method="POST">
-                            <input type="hidden" name="carrito_id" value="<?= $producto['carrito_id'] ?>">
-                            <input type="number" name="cantidad" value="<?= $producto['cantidad'] ?>" min="1" required>
-                            <button type="submit" name="update_quantity">Actualizar</button>
-                        </form>
-                    </td>
-                    <td><?= $producto['precio'] * $producto['cantidad'] ?></td>
-                    <td><img src="../../public/image/<?= $producto['imagen'] ?>" alt="Imagen del producto" width="50"></td>
-                    <td>
-                        <a href="../../controllers/CarritoController.php?action=remove&carrito_id=<?= $producto['carrito_id'] ?>" onclick="return confirm('¿Estás seguro de eliminar este producto del carrito?')">Eliminar</a>
-                    </td>
+                    <td colspan="6">El carrito está vacío.</td>
                 </tr>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </tbody>
     </table>
 
+    <!-- Formulario para añadir productos al carrito -->
+    <h2>Añadir Producto al Carrito</h2>
     <form action="../../controllers/CarritoController.php" method="POST">
         <input type="hidden" name="usuario_id" value="<?= $usuario_id ?>">
         <label for="producto_id">Producto:</label>
         <select name="producto_id" id="producto_id" required>
-            <!-- Aquí deberías cargar los productos disponibles desde la base de datos -->
-            <option value="1">Producto 1</option>
-            <option value="2">Producto 2</option>
+            <?php foreach ($productosDisponibles as $producto): ?>
+                <option value="<?= $producto['producto_id'] ?>">
+                    <?= htmlspecialchars($producto['nombre']) ?> ($<?= number_format($producto['precio'], 2) ?>)
+                </option>
+            <?php endforeach; ?>
         </select><br>
 
         <label for="cantidad">Cantidad:</label>
@@ -60,7 +92,12 @@ $productosEnCarrito = $carritoModel->getByUserId($usuario_id);
 
         <button type="submit" name="add_to_cart">Añadir al carrito</button>
     </form>
-    
+
+    <!-- Botón para confirmar compra -->
+    <form action="../../controllers/VentasController.php" method="POST">
+        <button type="submit" name="confirmar_venta">Confirmar Compra</button>
+    </form>
+
     <a href="../home/index.php">Regresar</a>
 </body>
 </html>
