@@ -20,6 +20,8 @@ $categorias = $categoriaModel->getAll();
 <head>
     <title><?= $producto ? 'Editar Producto' : 'Crear Producto' ?></title>
 </head>
+<h1>Formulario de Producto</h1>
+<a href="index.php">Regresar a Productos</a>
 <body>
     <h1><?= $producto ? 'Editar Producto' : 'Crear Producto' ?></h1>
     <form action="../../controllers/ProductoController.php" method="POST" enctype="multipart/form-data">

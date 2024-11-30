@@ -18,10 +18,29 @@ class Productos {
     
 
     public function getAll() {
-        $sql = "SELECT producto_id, nombre, descripcion, precio, cantidad_disponible, categoria_id, imagen FROM Productos WHERE estado = 'activo'";
+        $sql = "
+            SELECT 
+                p.producto_id, 
+                p.nombre, 
+                p.descripcion, 
+                p.precio, 
+                p.cantidad_disponible, 
+                p.imagen, 
+                p.categoria_id, 
+                c.nombre_categoria 
+            FROM 
+                Productos p
+            LEFT JOIN 
+                Categorias c 
+            ON 
+                p.categoria_id = c.categoria_id
+            WHERE 
+                p.estado = 'activo'
+        ";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     
     
 

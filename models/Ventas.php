@@ -7,6 +7,16 @@ class Ventas {
         $this->pdo = $pdo;
     }
 
+    public function getAllVentas() {
+        $sql = "SELECT v.venta_id, v.fecha_venta, v.total, v.estado, u.nombre AS nombre_cliente
+                FROM Ventas v
+                INNER JOIN Usuarios u ON v.usuario_id = u.usuario_id
+                ORDER BY v.fecha_venta DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Registrar una nueva venta
     public function registrarVenta($usuario_id, $total) {
         $sql = "INSERT INTO Ventas (usuario_id, total) VALUES (:usuario_id, :total)";

@@ -1,4 +1,20 @@
 <?php
+session_start();
+// Verificar si el usuario no está logueado
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: ../auth/login.php");
+    exit;
+}
+
+// Verificar si el usuario es administrador
+if ($_SESSION['rol'] !== 'admin') {
+    echo "Acceso denegado. Solo los administradores pueden acceder a esta página.";
+    exit;
+}
+
+// El contenido para los administradores
+echo "<h1>Bienvenido, Administrador</h1>";
+
 require_once '../../config/db.php';
 require_once '../../models/Usuario.php';
 
@@ -13,6 +29,7 @@ $usuarios = $usuarioModel->getAll();
 <body>
     <h1>Usuarios</h1>
     <a href="form.php">Añadir Usuario</a>
+    <a href="../home/index.php">Regresar al Inicio</a>
     <table>
         <thead>
             <tr>

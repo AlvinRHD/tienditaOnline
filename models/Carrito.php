@@ -5,6 +5,17 @@ class Carrito {
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
+    public function getCarritoPorClientes() {
+        $sql = "SELECT c.carrito_id, c.usuario_id, u.nombre AS nombre_cliente, p.nombre AS nombre_producto, 
+                       c.cantidad, p.precio, (c.cantidad * p.precio) AS total
+                FROM Carrito c
+                INNER JOIN Usuarios u ON c.usuario_id = u.usuario_id
+                INNER JOIN Productos p ON c.producto_id = p.producto_id
+                ORDER BY c.usuario_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function getByUserId($usuario_id) {
         $stmt = $this->pdo->prepare("

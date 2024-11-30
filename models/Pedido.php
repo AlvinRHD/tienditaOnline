@@ -5,6 +5,18 @@ class Pedido {
     public function __construct($pdo) {
         $this->pdo = $pdo;
     }
+    public function getPedidosPorClientes() {
+        $sql = "SELECT p.pedido_id, u.usuario_id, u.nombre AS nombre_cliente, pr.nombre AS nombre_producto, 
+                       p.cantidad, p.subtotal, v.fecha_venta
+                FROM Pedidos p
+                INNER JOIN Ventas v ON p.venta_id = v.venta_id
+                INNER JOIN Usuarios u ON v.usuario_id = u.usuario_id
+                INNER JOIN Productos pr ON p.producto_id = pr.producto_id
+                ORDER BY u.usuario_id, v.fecha_venta";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Registrar un pedido
     public function registrarPedido($venta_id, $producto_id, $cantidad, $subtotal) {

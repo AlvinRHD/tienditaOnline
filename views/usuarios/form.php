@@ -17,6 +17,8 @@ if (isset($_GET['id'])) {
     <title><?= $usuario ? 'Editar Usuario' : 'Crear Usuario' ?></title>
 </head>
 <body>
+    <h1>Formulario de usuarios</h1>
+    <a href="index.php">Regresar a usuarios</a>
     <h1><?= $usuario ? 'Editar Usuario' : 'Crear Usuario' ?></h1>
     <form action="../../controllers/UsuarioController.php" method="POST">
         <input type="hidden" name="action" value="<?= $usuario ? 'update' : 'create' ?>">
@@ -46,6 +48,5 @@ if (isset($_GET['id'])) {
 
         <button type="submit"><?= $usuario ? 'Actualizar' : 'Crear' ?></button>
     </form>
-    <a href="index.php">Regresar</a>
 </body>
 </html>

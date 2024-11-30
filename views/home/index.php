@@ -1,11 +1,13 @@
 <?php
 session_start();
-
-// Verificar si el usuario está logueado y es un cliente
-if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] != 'cliente') {
+if (!isset($_SESSION['usuario_id'])) {
     header("Location: ../auth/login.php");
     exit;
 }
+
+
+
+// Si el usuario es cliente, continuar mostrando el home.
 
 require_once '../../config/db.php';
 require_once '../../models/Producto.php';
@@ -46,6 +48,18 @@ $usuario_id = $_SESSION['usuario_id'];
 </head>
 <body>
     <h1>Bienvenido a la Tienda Online</h1>
+    <ul>
+            <?php if ($_SESSION['rol'] === 'admin'): ?>
+                <li><a href="../productos/index.php">Productos</a></li>
+                <li><a href="../categorias/index.php">Categorías</a></li>
+                <li><a href="../usuarios/index.php">Usuarios</a></li>
+                <li><a href="../pedidos/index.php">Pedidos</a></li>
+                <li><a href="../ventas/index.php">Ventas</a></li>
+            <?php endif; ?>
+            <li><a href="../carrito/index.php">Carrito</a></li>
+            <a href="../../views/auth/logout.php">Cerrar sesión</a>
+    </ul>
+
 
     <!-- Barra de búsqueda -->
     <form action="index.php" method="GET">

@@ -15,5 +15,6 @@ echo "¡Gracias por tu compra! Tu venta ID es: " . $venta_id;
     <h1>¡Compra Confirmada!</h1>
     <p>Gracias por tu compra. El ID de tu venta es: <strong><?= $venta_id ?></strong></p>
     <a href="../home/index.php">Volver al inicio</a>
+    <a href="index.php">Regresar a ventas</a>
 </body>
 </html>

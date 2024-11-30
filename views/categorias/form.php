@@ -16,6 +16,8 @@ if (isset($_GET['id'])) {
     <title><?= $categoria ? 'Editar Categoría' : 'Crear Categoría' ?></title>
 </head>
 <body>
+    <h1>Formulario de categorias</h1>
+    <a href="index.php">Regresar a categorias</a>
     <h1><?= $categoria ? 'Editar Categoría' : 'Crear Categoría' ?></h1>
     <form action="../../controllers/CategoriaController.php" method="POST">
         <input type="hidden" name="action" value="<?= $categoria ? 'update' : 'create' ?>">
@@ -26,6 +28,6 @@ if (isset($_GET['id'])) {
         <input type="text" name="nombre_categoria" value="<?= $categoria['nombre_categoria'] ?? '' ?>" required><br>
         <button type="submit"><?= $categoria ? 'Actualizar' : 'Crear' ?></button>
     </form>
-    <a href="index.php">Regresar</a>
+    
 </body>
 </html>
