@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $host = 'localhost';
-$dbname = 'tienditaOnline'; // Asegúrate de que este sea el nombre correcto de tu base de datos.
+$dbname = 'tienditaOnline'; //
 $username = 'root';
 $password = 'witty';
 
