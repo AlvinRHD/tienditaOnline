@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id'] = $usuario['usuario_id'];
             $_SESSION['rol'] = $usuario['rol'];
             if ($usuario['rol'] === 'admin') {
-                header("Location: ../productos/index.php");
+                header("Location: ../home/index.php");
             } elseif ($usuario['rol'] === 'cliente') {
                 header("Location: ../home/index.php");
             }
